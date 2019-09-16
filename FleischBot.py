@@ -19,11 +19,14 @@ def Fleischverbrauch(bot,update):
     id=str(update.message.from_user.id)
     update.message.reply_text(Kontos[id])
 
+def Abschluss(bot,update):
+    update.message.reply_text(Kontos)
 
 
-updater = Updater('youstupidshit')
+updater = Updater('860123473:AAFWU0FHzrcpOKCaS73KD5sTc67mQjX-EAg')
 dp = updater.dispatcher
 dp.add_handler(CommandHandler('Fleisch',Fleisch))
 dp.add_handler(CommandHandler('Fleischverbrauch',Fleischverbrauch))
+dp.add_handler(CommandHandler('Abschluss',Abschluss))
 updater.start_polling()
 updater.idle()
