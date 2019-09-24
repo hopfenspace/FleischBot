@@ -1,6 +1,6 @@
 import os, json
 from telegram.ext import Updater, CommandHandler
-
+import random
 with open ("Fleisch.json", "r+") as fd:
     Kontos=json.load(fd)
 
@@ -18,9 +18,7 @@ FleischMessages = [
 def Fleisch(bot,update):
     id=update.message.from_user.id
     id=str(id)
-    msg = (random.choice(FleischMessages))
-    print (msg)
-    update.message.reply_text(msg)
+    update.message.reply_text(random.choice(FleischMessages))
     if id in Kontos:
         Kontos[id] = Kontos[id]+1
         with open ("Fleisch.json", "w") as fd:
@@ -49,7 +47,7 @@ def SetzeNull(bot,update):
     with open ("Fleisch.json", "w") as fd:
             json.dump(Kontos,fd)
 
-updater = Updater('Add your token')
+updater = Updater('Add your token here')
 dp = updater.dispatcher
 dp.add_handler(CommandHandler('Fleisch',Fleisch))
 dp.add_handler(CommandHandler('Fleischverbrauch',Fleischverbrauch))
