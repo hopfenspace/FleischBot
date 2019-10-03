@@ -1,6 +1,8 @@
 import os, json
 from telegram.ext import Updater, CommandHandler
 import random
+
+
 with open ("Fleisch.json", "r+") as fd:
     Kontos=json.load(fd)
 
@@ -17,12 +19,13 @@ FleischMessages = [
 ]
 
 
-def Fleisch(bot,update):
-    id=update.message.from_user.id
-    id=str(id)
+def Fleisch(bot, update):
+    id = str(update.message.from_user.id)
     commands = update.message.text.split(" ")[1:]
+
     if len(commands) > 1:
         return update.message.reply_text("Don't give so many args!")
+
     try:
         amount = int(commands[0])
     except ValueError:
@@ -30,27 +33,24 @@ def Fleisch(bot,update):
         	"Specify a valid integer for the amount!"
         )
     except IndexError:
-        update.message.reply_text(random.choice(FleischMessages))
-        if id in Kontos:
-            Kontos[id] = Kontos[id]+1
-        else: 
-            Kontos[id] = 1
-    else:
-        update.message.reply_text(random.choice(FleischMessages))
-        if id not in Kontos:
-            Kontos[id] = 1
-        else:
-            if id + "-amount" not in Kontos.keys():
-                Kontos[id + "-amount"] = list()
-            Kontos[id + "-amount"].append(amount)
-            Kontos[id] += 1
-    finally:
-        with open ("Fleisch.json", "w") as fd:
-            json.dump(Kontos,fd)
-        
+        amount = 1
 
-def Fleischverbrauch(bot,update):
-    id=str(update.message.from_user.id)
+    if amount < 0:
+        return update.message.reply_text("Don't give me negative numbers!")
+
+    update.message.reply_text(random.choice(FleischMessages))
+
+    if id in Kontos:
+        Kontos[id] += amount
+    else:
+        Kontos[id] = amount
+
+    with open ("Fleisch.json", "w") as fd:
+        json.dump(Kontos,fd)
+
+
+def Fleischverbrauch(bot, update):
+    id = str(update.message.from_user.id)
     if id in Kontos:
         update.message.reply_text(Kontos[id])
     else:
@@ -60,23 +60,22 @@ def Fleischverbrauch(bot,update):
         update.message.reply_text(Kontos[id])
     
 
-def Abschluss(bot,update):
+def Abschluss(bot, update):
     update.message.reply_text(Kontos)
 
 
-def SetzeNull(bot,update):
-    id=update.message.from_user.id
-    id=str(id)
+def SetzeNull(bot, update):
+    id = str(update.message.from_user.id)
     Kontos[id] = 0
-    with open ("Fleisch.json", "w") as fd:
-            json.dump(Kontos,fd)
+    with open("Fleisch.json", "w") as fd:
+            json.dump(Kontos, fd)
 
 
 updater = Updater('Add your token here')
 dp = updater.dispatcher
-dp.add_handler(CommandHandler('Fleisch',Fleisch))
-dp.add_handler(CommandHandler('Fleischverbrauch',Fleischverbrauch))
-dp.add_handler(CommandHandler('Abschluss',Abschluss))
+dp.add_handler(CommandHandler('Fleisch', Fleisch))
+dp.add_handler(CommandHandler('Fleischverbrauch', Fleischverbrauch))
+dp.add_handler(CommandHandler('Abschluss', Abschluss))
 dp.add_handler(CommandHandler('SetzeNull', SetzeNull))
 updater.start_polling()
 updater.idle()
